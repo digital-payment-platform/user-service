@@ -1,6 +1,7 @@
 package com.digi_payment.user_service.controller;
 
 import com.digi_payment.user_service.Entity.User;
+import com.digi_payment.user_service.exception.UserNotFoundException;
 import com.digi_payment.user_service.repository.UserRepository;
 import com.digi_payment.user_service.service.UserService;
 import com.digi_payment.user_service.serviceImpl.UserServiceImpl;
@@ -26,12 +27,12 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id){
         User user = userServiceImpl.getUserById(id);
-        if (user != null) {
-            return new ResponseEntity<>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (user == null) {
+            throw new UserNotFoundException("User with ID " + id + " not found");
         }
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
 
     @GetMapping("allUsers")
     public ResponseEntity<List<User>> getAllUsers() {
